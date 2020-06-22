@@ -61,7 +61,12 @@ namespace ChatRoom
 
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddRazorPages();
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions.AddPageRoute("/Chat", "/");
+                    options.Conventions.AddPageRoute("/Chat", "/Index");
+                });
 
             services.AddSignalR();
         }

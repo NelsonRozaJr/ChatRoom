@@ -1,9 +1,12 @@
 ﻿@page
-@model ChatRoom.Pages.ChatModel
+@model ChatModel
 
 @{
     ViewData["Title"] = "Chat Room";
 }
+
+<h4>@ViewData["Title"]</h4>
+<hr />
 
 <div id="messagesList" class="messages"></div>
 <div class="input-zone">
