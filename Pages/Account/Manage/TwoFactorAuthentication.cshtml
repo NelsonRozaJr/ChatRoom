@@ -40,22 +40,33 @@
             <button type="submit" class="btn btn-default">Forget this browser</button>
         </form>
     }
-    <a asp-page="./Disable2fa" class="btn btn-outline-danger">Disable 2FA</a>
-    <a asp-page="./GenerateRecoveryCodes" class="btn btn-outline-secondary">Reset recovery codes</a>
+
+    <p>
+        <a asp-page="./Disable2fa">Disable 2FA</a>
+    </p>
+    <p>
+        <a asp-page="./GenerateRecoveryCodes">Reset recovery codes</a>
+    </p>
 }
 
 @if (!Model.HasAuthenticator)
 {
-    <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-outline-primary">Add authenticator app</a>
+    <p>
+        <a id="enable-authenticator" asp-page="./EnableAuthenticator">Add authenticator app</a>
+    </p>
 }
 else
 {
     if (!Model.Is2faEnabled)
     {
-        <a id="enable-authenticator" asp-page="./EnableAuthenticator" class="btn btn-outline-primary">Setup authenticator app</a>
+        <p>
+            <a id="enable-authenticator" asp-page="./EnableAuthenticator">Setup authenticator app</a>
+        </p>
     }
 
-    <a id="reset-authenticator" asp-page="./ResetAuthenticator" class="btn btn-outline-info">Reset authenticator app</a>
+    <p>
+        <a id="reset-authenticator" asp-page="./ResetAuthenticator">Reset authenticator app</a>
+    </p>
 }
 
 @section Scripts {
