@@ -1,0 +1,20 @@
+﻿@page
+@model ChatRoom.Pages.ChatModel
+
+@{
+    ViewData["Title"] = "Chat Room";
+}
+
+<div id="messagesList" class="messages"></div>
+<div class="input-zone">
+    <textarea id="messageInput" class="form-control"></textarea>
+    <button id="sendButton" class="btn btn-outline-primary ml-2 p-3">Send</button>
+</div>
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+    <script>
+        const currentUserName = "@User.Identity.Name";
+    </script>
+}

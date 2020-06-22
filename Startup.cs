@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using ChatRoom.Data.Models;
 using ChatRoom.Services.Email.Interfaces;
 using ChatRoom.Services.Email;
+using ChatRoom.Hubs;
 
 namespace ChatRoom
 {
@@ -61,6 +62,8 @@ namespace ChatRoom
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddRazorPages();
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,6 +92,7 @@ namespace ChatRoom
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/hub");
             });
         }
     }
