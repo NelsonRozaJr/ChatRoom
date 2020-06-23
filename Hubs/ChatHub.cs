@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace ChatRoom.Hubs
 {
@@ -21,6 +22,16 @@ namespace ChatRoom.Hubs
         {
             var senderUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
             await Clients.All.SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, isAutomaticMessage);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await SendMessage("disconnected", true);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            await SendMessage("connected", true);
         }
     }
 }

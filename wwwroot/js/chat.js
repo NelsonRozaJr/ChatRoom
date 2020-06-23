@@ -2,8 +2,10 @@
     .withUrl("/hub")
     .build();
 
-//Disable send button until connection is established
+//Disable buttons until connection is established
 $("#sendButton").prop('disabled', true);
+$("#exitButton").prop('disabled', true);
+$("#messageInput").prop('disabled', true);
 
 connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutomaticMessage) => {
     message = message.replace(/&/g, "&amp;")
@@ -30,13 +32,13 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutom
 
     if (isAutomaticMessage) {
         if (currentUserName === userName) {
-            fullName = "You are connected!";
+            message = `You are ${message}!`;
         }
         else {
-            fullName = fullName + " is connected!"
+            message = `${fullName} is ${message}!`
         }
-        
-        divMessage.innerHTML += '<div class="' + messageStyle + '">' + fullName + '</div>';
+
+        divMessage.innerHTML += '<div class="' + messageStyle + '">' + message + '</div>';
     }
     else {
         divMessage.innerHTML += '<div class="' + messageStyle + '">' + fullName + '<span class="show-to"> says to all:</span></div>' +
@@ -51,8 +53,8 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutom
 connection.start()
     .then(() => {
         $("#sendButton").prop('disabled', false);
-        connection.invoke("SendMessage", "I am connected now!", true)
-            .catch(err => console.error(err));
+        $("#exitButton").prop('disabled', false);
+        $("#messageInput").prop('disabled', false);
     })
     .catch(err => console.error(err.toString()));
 
@@ -71,6 +73,12 @@ $("#sendButton").click(event => {
 $("#exitButton").click(function (event) {
     connection.stop()
         .catch(err => console.error(err));
+
+    $("#sendButton").prop('disabled', true);
+    $("#exitButton").prop('disabled', true);
+
+    $("#messageInput").val("");
+    $("#messageInput").prop('disabled', true);
 
     event.preventDefault();
 });
