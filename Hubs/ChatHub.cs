@@ -17,10 +17,10 @@ namespace ChatRoom.Hubs
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SendMessage(string message)
+        public async Task SendMessage(string message, bool isAutomaticMessage)
         {
             var senderUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            await Clients.All.SendAsync("ReceiveMessage", $"{senderUser.FirstName} {senderUser.LastName}", senderUser.UserName, message);
+            await Clients.All.SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, isAutomaticMessage);
         }
     }
 }

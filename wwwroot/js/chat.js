@@ -1,49 +1,76 @@
-﻿"use strict";
-
-var connection = new signalR.HubConnectionBuilder()
+﻿const connection = new signalR.HubConnectionBuilder()
     .withUrl("/hub")
     .build();
 
 //Disable send button until connection is established
 $("#sendButton").prop('disabled', true);
 
-connection.on("ReceiveMessage", function (fullName, userName, message) {
-    var divMessages = document.getElementById("messagesList");
+connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutomaticMessage) => {
+    message = message.replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
-    var divMessage = document.createElement("div");
-    divMessage.className = "col-12 mb-2 bg-light text-dark";
+    let divMessage = document.createElement("div");
+    divMessage.className = "col-12 mb-2 bg-light";
 
-    var messageStyle = "message-author-red";
+    let messageStyle = "";
     if (currentUserName === userName) {
         divMessage.className += " text-right";
         messageStyle = "message-author-blue";
     }
-    
-    message = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    else {
+        divMessage.className += " text-left";
+        messageStyle = "message-author-red";
+    }
 
-    divMessage.innerHTML = '<div class="dateStyle">' + new Date().toLocaleString() + '</div>' +
-        '<div class="' + messageStyle + '">' + fullName + '</div>' +
-        '<div class="message">' + message + '</div>';
+    let localDate = new Date().toLocaleString();
+    let fullName = `${firstName} ${lastName}`;
 
+    divMessage.innerHTML = '<div class="show-date">' + localDate + '</div>';
+
+    if (isAutomaticMessage) {
+        if (currentUserName === userName) {
+            fullName = "You are connected!";
+        }
+        else {
+            fullName = fullName + " is connected!"
+        }
+        
+        divMessage.innerHTML += '<div class="' + messageStyle + '">' + fullName + '</div>';
+    }
+    else {
+        divMessage.innerHTML += '<div class="' + messageStyle + '">' + fullName + '<span class="show-to"> says to all:</span></div>' +
+            '<div class="message">' + message + '</div>';
+    }
+
+    let divMessages = document.getElementById("messagesList");
     divMessages.appendChild(divMessage);
     divMessages.scrollTop = divMessages.scrollHeight;
 });
 
-connection.start().then(function () {
-    $("#sendButton").prop('disabled', false);
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+connection.start()
+    .then(() => {
+        $("#sendButton").prop('disabled', false);
+        connection.invoke("SendMessage", "I am connected now!", true)
+            .catch(err => console.error(err));
+    })
+    .catch(err => console.error(err.toString()));
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var message = $("#messageInput").val();
+$("#sendButton").click(event => {
+    let message = $("#messageInput").val();
     if ($.trim(message) !== "") {
-        connection.invoke("SendMessage", message).catch(function (err) {
-            return console.error(err.toString());
-        });
+        connection.invoke("SendMessage", message, false)
+            .catch(err => console.error(err));
 
         $("#messageInput").val("");
     }
     
+    event.preventDefault();
+});
+
+$("#exitButton").click(function (event) {
+    connection.stop()
+        .catch(err => console.error(err));
+
     event.preventDefault();
 });

@@ -28,10 +28,16 @@
     font-weight: normal;
 }
 
-.dateStyle {
+.show-date {
     font-weight: normal;
     font-size: small;
     color: brown;
+}
+
+.show-to {
+    font-weight: normal;
+    font-size: small;
+    color: black;
 }
 
 .messages {
