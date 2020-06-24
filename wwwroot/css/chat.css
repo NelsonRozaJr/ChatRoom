@@ -14,30 +14,41 @@
     margin-right: 10px;
 }
 
-.message-author-blue {
-    font-weight: normal;
-    color: blue;
-}
-
-.message-author-red {
-    font-weight: normal;
-    color: red;
+.message-author {
+    font-family: 'Comic Sans MS';
+    color: #4800ff;
 }
 
 .message {
     font-weight: normal;
+    color: maroon;
+    font-family: 'Comic Sans MS';
+}
+
+.bg-connected {
+    background-color: #e6fbe5;
+}
+
+.bg-disconnected {
+    background-color: #fbe7e7;
+}
+
+.bg-message {
+    background-color: #d4fafa;
 }
 
 .show-date {
     font-weight: normal;
     font-size: small;
-    color: brown;
+    color: #808080;
+    font-family: 'Comic Sans MS';
 }
 
 .show-to {
     font-weight: normal;
     font-size: small;
-    color: black;
+    font-family: 'Comic Sans MS';
+    color: #808080;
 }
 
 .messages {

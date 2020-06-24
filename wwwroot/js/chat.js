@@ -7,22 +7,23 @@ $("#sendButton").prop('disabled', true);
 $("#exitButton").prop('disabled', true);
 $("#messageInput").prop('disabled', true);
 
-connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutomaticMessage) => {
+connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConnected, isDisconnected) => {
     message = message.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
 
     let divMessage = document.createElement("div");
-    divMessage.className = "col-12 mb-2 bg-light";
+    divMessage.className = "col-12 mb-2";
+    divMessage.className += currentUserName === userName ? " text-right" : " text-left";
 
-    let messageStyle = "";
-    if (currentUserName === userName) {
-        divMessage.className += " text-right";
-        messageStyle = "message-author-blue";
+    if (isConnected) {
+        divMessage.className += " bg-connected";
+    }
+    else if (isDisconnected) {
+        divMessage.className += " bg-disconnected";
     }
     else {
-        divMessage.className += " text-left";
-        messageStyle = "message-author-red";
+        divMessage.className += currentUserName === userName ? " bg-light" : " bg-message";
     }
 
     let localDate = new Date().toLocaleString();
@@ -30,18 +31,14 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isAutom
 
     divMessage.innerHTML = '<div class="show-date">' + localDate + '</div>';
 
-    if (isAutomaticMessage) {
-        if (currentUserName === userName) {
-            message = `You are ${message}!`;
-        }
-        else {
-            message = `${fullName} is ${message}!`
-        }
-
-        divMessage.innerHTML += '<div class="' + messageStyle + '">' + message + '</div>';
+    if (isConnected) {
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> is connected.</span></div>';
+    }
+    else if (isDisconnected) {
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> is disconnected.</span></div>';
     }
     else {
-        divMessage.innerHTML += '<div class="' + messageStyle + '">' + fullName + '<span class="show-to"> says to all:</span></div>' +
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> says to all:</span></div>' +
             '<div class="message">' + message + '</div>';
     }
 
@@ -61,7 +58,7 @@ connection.start()
 $("#sendButton").click(event => {
     let message = $("#messageInput").val();
     if ($.trim(message) !== "") {
-        connection.invoke("SendMessage", message, false)
+        connection.invoke("SendMessage", message, false, false)
             .catch(err => console.error(err));
 
         $("#messageInput").val("");

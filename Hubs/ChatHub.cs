@@ -18,20 +18,20 @@ namespace ChatRoom.Hubs
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SendMessage(string message, bool isAutomaticMessage)
+        public async Task SendMessage(string message, bool isConnected, bool isDisconnected)
         {
             var senderUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            await Clients.All.SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, isAutomaticMessage);
-        }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            await SendMessage("disconnected", true);
+            await Clients.All.SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, isConnected, isDisconnected);
         }
 
         public override async Task OnConnectedAsync()
         {
-            await SendMessage("connected", true);
+            await SendMessage(string.Empty, true, false);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await SendMessage(string.Empty, false, true);
         }
     }
 }
