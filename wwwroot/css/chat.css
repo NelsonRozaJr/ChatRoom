@@ -6,7 +6,7 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    margin: 10px;
+    margin: 0px;
 }
 
 .input-zone-input {
@@ -16,12 +16,12 @@
 
 .message-author {
     font-family: 'Comic Sans MS';
-    color: #4800ff;
+    color: #984964;
 }
 
 .message {
     font-weight: normal;
-    color: maroon;
+    color: #0026ff;
     font-family: 'Comic Sans MS';
 }
 
@@ -39,12 +39,26 @@
 
 .show-date {
     font-weight: normal;
-    font-size: small;
+    font-size: x-small;
     color: #808080;
     font-family: 'Comic Sans MS';
 }
 
-.show-to {
+.is-connected {
+    font-weight: normal;
+    font-size: small;
+    font-family: 'Comic Sans MS';
+    color: #368714;
+}
+
+.is-disconnected {
+    font-weight: normal;
+    font-size: small;
+    font-family: 'Comic Sans MS';
+    color: #ff0000;
+}
+
+.says-to {
     font-weight: normal;
     font-size: small;
     font-family: 'Comic Sans MS';

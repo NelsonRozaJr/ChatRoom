@@ -9,10 +9,16 @@
 <hr />
 
 <div id="messagesList" class="messages"></div>
+
 <div class="input-zone">
-    <textarea id="messageInput" class="form-control"></textarea>
-    <button id="sendButton" class="btn btn-outline-primary ml-2 px-4 py-3">Send</button>
-    <button id="exitButton" class="btn btn-outline-primary ml-2 px-4 py-3">Exit</button>
+    <div class="col-11">
+        <textarea id="messageInput" autocomplete="off" class="form-control"></textarea>
+    </div>
+    <div class="col-1 mt-1">
+        <button id="sendButton" class="btn btn-outline-primary mb-1 py-0 w-100 text-center">Send</button>
+        <button id="startButton" class="btn btn-outline-success mb-1 py-0 w-100" style="display:none;">Start</button>
+        <button id="exitButton" class="btn btn-outline-danger mb-1 py-0 w-100">Exit</button>
+    </div>
 </div>
 
 @section Scripts {

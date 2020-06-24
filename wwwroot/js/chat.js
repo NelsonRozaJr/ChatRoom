@@ -3,9 +3,7 @@
     .build();
 
 //Disable buttons until connection is established
-$("#sendButton").prop('disabled', true);
-$("#exitButton").prop('disabled', true);
-$("#messageInput").prop('disabled', true);
+changeDisableButtons(true);
 
 connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConnected, isDisconnected) => {
     message = message.replace(/&/g, "&amp;")
@@ -32,13 +30,13 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConne
     divMessage.innerHTML = '<div class="show-date">' + localDate + '</div>';
 
     if (isConnected) {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> is connected.</span></div>';
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="is-connected"> is connected.</span></div>';
     }
     else if (isDisconnected) {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> is disconnected.</span></div>';
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="is-disconnected"> is disconnected.</span></div>';
     }
     else {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="show-to"> says to all:</span></div>' +
+        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="says-to"> says to all:</span></div>' +
             '<div class="message">' + message + '</div>';
     }
 
@@ -47,15 +45,60 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConne
     divMessages.scrollTop = divMessages.scrollHeight;
 });
 
-connection.start()
-    .then(() => {
-        $("#sendButton").prop('disabled', false);
-        $("#exitButton").prop('disabled', false);
-        $("#messageInput").prop('disabled', false);
-    })
-    .catch(err => console.error(err.toString()));
+connectionStart();
 
 $("#sendButton").click(event => {
+    sendMessage();
+    event.preventDefault();
+});
+
+$("#exitButton").click(function (event) {
+    connectionStop();
+
+    changeDisableButtons(true);
+
+    $("#messageInput").val("");
+    $("#startButton").show();
+    $("#exitButton").hide();
+
+    event.preventDefault();
+});
+
+$("#startButton").click(event => {
+    connectionStart();
+    $("#exitButton").show();
+    event.preventDefault();
+});
+
+$("#messageInput").keypress(event => {
+    if (event.which === 13 && !event.shiftKey) {
+        sendMessage();
+        event.preventDefault();
+    }
+});
+
+function connectionStart() {
+    connection.start()
+        .then(() => {
+            changeDisableButtons(false);
+            $("#startButton").hide();
+        })
+        .catch(err => console.error(err.toString()));
+}
+
+function connectionStop() {
+    connection.stop()
+        .catch(err => console.error(err));
+}
+
+function changeDisableButtons(flag) {
+    $("#sendButton").prop('disabled', flag);
+    $("#exitButton").prop('disabled', flag);
+    $("#messageInput").prop('disabled', flag);
+}
+
+
+function sendMessage() {
     let message = $("#messageInput").val();
     if ($.trim(message) !== "") {
         connection.invoke("SendMessage", message, false, false)
@@ -63,19 +106,4 @@ $("#sendButton").click(event => {
 
         $("#messageInput").val("");
     }
-    
-    event.preventDefault();
-});
-
-$("#exitButton").click(function (event) {
-    connection.stop()
-        .catch(err => console.error(err));
-
-    $("#sendButton").prop('disabled', true);
-    $("#exitButton").prop('disabled', true);
-
-    $("#messageInput").val("");
-    $("#messageInput").prop('disabled', true);
-
-    event.preventDefault();
-});
+}
