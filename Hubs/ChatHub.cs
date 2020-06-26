@@ -14,6 +14,7 @@ namespace ChatRoom.Hubs
         private readonly UserManager<AppUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private static List<ConnectedUser> connectedUsers = new List<ConnectedUser>();
+        private static int countUsers;
 
         public ChatHub(UserManager<AppUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
@@ -50,6 +51,9 @@ namespace ChatRoom.Hubs
             connectedUsers.Add(new ConnectedUser { UserId = user.Id, UserName = user.UserName, FullName = $"{user.FirstName} {user.LastName}" });
             await Clients.All.SendAsync("ConnectedUsers", connectedUsers.OrderBy(u => u.FullName));
 
+            countUsers++;
+            await Clients.All.SendAsync("CountUsers", countUsers);
+
             await base.OnConnectedAsync();
         }
 
@@ -59,6 +63,9 @@ namespace ChatRoom.Hubs
 
             connectedUsers.RemoveAll(u => u.UserId == user.Id);
             await Clients.All.SendAsync("ConnectedUsers", connectedUsers.OrderBy(u => u.FullName));
+
+            countUsers--;
+            await Clients.All.SendAsync("CountUsers", countUsers);
 
             await base.OnDisconnectedAsync(exception);
         }

@@ -45,6 +45,11 @@ var sendMessage = function () {
 //Disable buttons until connection is established
 changeDisableButtons(true);
 
+connection.on("CountUsers", countUsers => {
+    let messageCount = countUsers === 1 ? `There is ${countUsers} user connected` : `There are ${countUsers} users connected`;
+    $("#countUsers").html(messageCount);
+});
+
 connection.on("ConnectedUsers", connectedUsers => {
     let currentUserName = $("#userName").val();
     let currentUserSelected = $("#selUsers").val() === null ? "all" : $("#selUsers").val();
