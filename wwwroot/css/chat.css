@@ -7,9 +7,21 @@
     color: #984964;
 }
 
-.message {
+.all-message {
     font-weight: normal;
-    color: #0026ff;
+    color: green;
+    font-family: 'Comic Sans MS';
+}
+
+.self-message {
+    font-weight: normal;
+    color: blue;
+    font-family: 'Comic Sans MS';
+}
+
+.p-message {
+    font-weight: normal;
+    color: red;
     font-family: 'Comic Sans MS';
 }
 
@@ -22,6 +34,10 @@
 }
 
 .bg-message {
+    background-color: #fffade;
+}
+
+.bg-p-message {
     background-color: #d4fafa;
 }
 

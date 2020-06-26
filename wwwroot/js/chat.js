@@ -34,7 +34,7 @@ var sendMessage = function () {
                 .catch(err => console.error(err));
         }
         else {
-            connection.invoke("SendPrivateMessage", userId, message)
+            connection.invoke("SendPrivateMessage", userId, $("#selUsers option:selected").html(), message)
                 .catch(err => console.error(err));
         }
 
@@ -60,7 +60,7 @@ connection.on("ConnectedUsers", connectedUsers => {
     $("#selUsers").empty().append(options).val(currentUserSelected);
 });
 
-connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConnected, isDisconnected) => {
+connection.on("ReceiveMessage", (senderFullName, senderUserName, receiverFullName, message, isConnected, isDisconnected) => {
     let currentUserName = $("#userName").val();
 
     message = message.replace(/&/g, "&amp;")
@@ -69,32 +69,28 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConne
 
     let divMessage = document.createElement("div");
     divMessage.className = "col-12 mb-2";
-    divMessage.className += currentUserName === userName ? " text-right" : " text-left";
-
-    if (isConnected) {
-        divMessage.className += " bg-connected";
-    }
-    else if (isDisconnected) {
-        divMessage.className += " bg-disconnected";
-    }
-    else {
-        divMessage.className += currentUserName === userName ? " bg-light" : " bg-message";
-    }
+    divMessage.className += currentUserName === senderUserName ? " text-right" : " text-left";
 
     let localDate = new Date().toLocaleString();
-    let fullName = `${firstName} ${lastName}`;
-
     divMessage.innerHTML = '<div class="show-date">' + localDate + '</div>';
 
     if (isConnected) {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="is-connected"> is connected.</span></div>';
+        divMessage.className += " bg-connected";
+        divMessage.innerHTML += '<div class="message-author">' + senderFullName + '<span class="is-connected"> is connected.</span></div>';
     }
     else if (isDisconnected) {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="is-disconnected"> is disconnected.</span></div>';
+        divMessage.className += " bg-disconnected";
+        divMessage.innerHTML += '<div class="message-author">' + senderFullName + '<span class="is-disconnected"> is disconnected.</span></div>';
     }
     else {
-        divMessage.innerHTML += '<div class="message-author">' + fullName + '<span class="says-to"> says to all:</span></div>' +
-            '<div class="message">' + message + '</div>';
+        let fontColorMessage = currentUserName === senderUserName ? " self-message" : (receiverFullName === "all" ? " all-message" : " p-message");
+        let backgroundMessage = receiverFullName === "all" ? " bg-message" : " bg-p-message";
+
+        divMessage.className += currentUserName === senderUserName ? " bg-light" : backgroundMessage;
+
+        divMessage.innerHTML += '<div class="message-author">' + senderFullName +
+            '<span class="says-to"> says to </span>' + receiverFullName + ':</div>' +
+            '<div class="' + fontColorMessage +'">' + message + '</div>';
     }
 
     let divMessages = document.getElementById("messagesList");

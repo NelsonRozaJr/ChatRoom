@@ -24,15 +24,23 @@ namespace ChatRoom.Hubs
         public async Task<AppUser> SendMessage(string message, bool isConnected, bool isDisconnected)
         {
             var senderUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            await Clients.All.SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, isConnected, isDisconnected);
+            if (senderUser != null)
+            {
+                await Clients.All.SendAsync("ReceiveMessage", $"{senderUser.FirstName} {senderUser.LastName}", 
+                    senderUser.UserName, "all", message, isConnected, isDisconnected);
+            }
 
             return senderUser;
         }
 
-        public async Task SendPrivateMessage(string receiverUserId, string message)
+        public async Task SendPrivateMessage(string receiverUserId, string receiverFullName, string message)
         {
             var senderUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            await Clients.Users(senderUser.Id, receiverUserId).SendAsync("ReceiveMessage", senderUser.FirstName, senderUser.LastName, senderUser.UserName, message, false, false);
+            if (senderUser != null)
+            {
+                await Clients.Users(senderUser.Id, receiverUserId).SendAsync("ReceiveMessage", $"{senderUser.FirstName} {senderUser.LastName}",
+                    senderUser.UserName, receiverFullName, message, false, false);
+            }
         }
 
         public override async Task OnConnectedAsync()
