@@ -2,10 +2,67 @@
     .withUrl("/hub")
     .build();
 
+var changeDisableButtons = function (flag) {
+    $("#btnSendMessage").prop('disabled', flag);
+    $("#btnExit").prop('disabled', flag);
+    $("#txtMessage").prop('disabled', flag);
+    $("#selUsers").prop('disabled', flag);
+};
+
+var connectionStart = function () {
+    connection.start()
+        .then(() => {
+            changeDisableButtons(false);
+            $("#btnStart").hide();
+            $("#txtMessage").focus();
+        })
+        .catch(err => console.error(err.toString()));
+};
+
+var connectionStop = function () {
+    connection.stop()
+        .catch(err => console.error(err));
+};
+
+var sendMessage = function () {
+    let message = $("#txtMessage").val();
+    let userId = $("#selUsers").val();
+
+    if ($.trim(userId) !== "" && $.trim(message) !== "") {
+        if (userId === "all") {
+            connection.invoke("SendMessage", message, false, false)
+                .catch(err => console.error(err));
+        }
+        else {
+            connection.invoke("SendPrivateMessage", userId, message)
+                .catch(err => console.error(err));
+        }
+
+        $("#txtMessage").val("").focus();
+    }
+};
+
 //Disable buttons until connection is established
 changeDisableButtons(true);
 
+connection.on("ConnectedUsers", connectedUsers => {
+    let currentUserName = $("#userName").val();
+    let currentUserSelected = $("#selUsers").val() === null ? "all" : $("#selUsers").val();
+    let options = '<option value="all">All</option>';
+
+    $.each(connectedUsers, (index, user) => {
+        let isCurrentUser = user.userName === currentUserName;
+        if (!isCurrentUser) {
+            options += '<option value="' + user.userId + '">' + user.fullName + '</option>';
+        }
+    });
+
+    $("#selUsers").empty().append(options).val(currentUserSelected);
+});
+
 connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConnected, isDisconnected) => {
+    let currentUserName = $("#userName").val();
+
     message = message.replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
@@ -41,69 +98,40 @@ connection.on("ReceiveMessage", (firstName, lastName, userName, message, isConne
     }
 
     let divMessages = document.getElementById("messagesList");
+
     divMessages.appendChild(divMessage);
     divMessages.scrollTop = divMessages.scrollHeight;
 });
 
 connectionStart();
 
-$("#sendButton").click(event => {
+$("#btnSendMessage").click(event => {
     sendMessage();
     event.preventDefault();
 });
 
-$("#exitButton").click(function (event) {
+$("#btnExit").click(function (event) {
     connectionStop();
 
     changeDisableButtons(true);
 
-    $("#messageInput").val("");
-    $("#startButton").show();
-    $("#exitButton").hide();
+    $("#txtMessage").val("");
+    $("#btnStart").show();
+    $("#btnExit").hide();
+    $("#selUsers").val("");
 
     event.preventDefault();
 });
 
-$("#startButton").click(event => {
+$("#btnStart").click(event => {
     connectionStart();
-    $("#exitButton").show();
+    $("#btnExit").show();
     event.preventDefault();
 });
 
-$("#messageInput").keypress(event => {
+$("#txtMessage").keypress(event => {
     if (event.which === 13 && !event.shiftKey) {
         sendMessage();
         event.preventDefault();
     }
 });
-
-function connectionStart() {
-    connection.start()
-        .then(() => {
-            changeDisableButtons(false);
-            $("#startButton").hide();
-        })
-        .catch(err => console.error(err.toString()));
-}
-
-function connectionStop() {
-    connection.stop()
-        .catch(err => console.error(err));
-}
-
-function changeDisableButtons(flag) {
-    $("#sendButton").prop('disabled', flag);
-    $("#exitButton").prop('disabled', flag);
-    $("#messageInput").prop('disabled', flag);
-}
-
-
-function sendMessage() {
-    let message = $("#messageInput").val();
-    if ($.trim(message) !== "") {
-        connection.invoke("SendMessage", message, false, false)
-            .catch(err => console.error(err));
-
-        $("#messageInput").val("");
-    }
-}

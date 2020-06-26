@@ -10,21 +10,24 @@
 
 <div id="messagesList" class="messages"></div>
 
-<div class="input-zone">
-    <div class="col-11">
-        <textarea id="messageInput" autocomplete="off" class="form-control"></textarea>
+<div>
+    <input type="hidden" id="userName" value="@User.Identity.Name" />
+    <div class="row">
+        <div class="col-12">
+            <textarea id="txtMessage" autocomplete="off" class="form-control"></textarea>
+        </div>
     </div>
-    <div class="col-1 mt-1">
-        <button id="sendButton" class="btn btn-outline-primary mb-1 py-0 w-100 text-center">Send</button>
-        <button id="startButton" class="btn btn-outline-success mb-1 py-0 w-100" style="display:none;">Start</button>
-        <button id="exitButton" class="btn btn-outline-danger mb-1 py-0 w-100">Exit</button>
+    <div class="row float-right">
+        <div class="col-12 mt-2">
+            <select id="selUsers" style="min-width:200px;"></select>
+            <button id="btnSendMessage" class="btn btn-outline-primary mb-1 py-0 text-center">Send</button>
+            <button id="btnStart" class="btn btn-outline-success mb-1 py-0" style="display:none;">Start</button>
+            <button id="btnExit" class="btn btn-outline-danger mb-1 py-0">Exit</button>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="~/lib/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/chat.js"></script>
-    <script>
-        const currentUserName = "@User.Identity.Name";
-    </script>
 }

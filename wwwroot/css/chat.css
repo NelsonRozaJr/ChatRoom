@@ -2,18 +2,6 @@
     box-sizing: border-box;
 }
 
-.input-zone {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    margin: 0px;
-}
-
-.input-zone-input {
-    flex: 1;
-    margin-right: 10px;
-}
-
 .message-author {
     font-family: 'Comic Sans MS';
     color: #984964;
@@ -66,10 +54,10 @@
 }
 
 .messages {
-    border: 1px solid #000;
-    margin: 10px;
-    max-height: 520px;
-    min-height: 520px;
+    border: 1px dotted #000000;
+    max-height: 400px;
+    min-height: 400px;
     overflow-y: auto;
     padding: 5px;
+    margin-bottom: 7px;
 }
