@@ -90,11 +90,12 @@ connection.on("ReceiveMessage", (senderFullName, senderUserName, receiverFullNam
     else {
         let fontColorMessage = currentUserName === senderUserName ? " self-message" : (receiverFullName === "all" ? " all-message" : " p-message");
         let backgroundMessage = receiverFullName === "all" ? " bg-message" : " bg-p-message";
+        let saysTo = receiverFullName === "all" ? "says to" : "privately says to";
 
         divMessage.className += currentUserName === senderUserName ? " bg-light" : backgroundMessage;
 
         divMessage.innerHTML += '<div class="message-author">' + senderFullName +
-            '<span class="says-to"> says to </span>' + receiverFullName + ':</div>' +
+            '<span class="says-to"> ' + saysTo + ' </span>' + receiverFullName + ':</div>' +
             '<div class="' + fontColorMessage +'">' + message + '</div>';
     }
 
