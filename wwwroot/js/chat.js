@@ -120,6 +120,7 @@ $("#btnExit").click(function (event) {
     $("#btnStart").show();
     $("#btnExit").hide();
     $("#selUsers").val("");
+    $("#countUsers").html("");
 
     event.preventDefault();
 });
