@@ -1,4 +1,6 @@
-﻿using ChatRoom.Services.Sms.Interfaces;
+﻿using ChatRoom.Services.OptionModels;
+using ChatRoom.Services.Sms.Interfaces;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -8,18 +10,18 @@ namespace ChatRoom.Services.Sms
 {
     public class SmsSender : ISmsSender
     {
-        private readonly ISmsConfiguration _smsConfiguration;
+        private readonly SmsOptions _smsOptions;
 
-        public SmsSender(ISmsConfiguration smsConfiguration)
+        public SmsSender(IOptions<SmsOptions> smsOptions)
         {
-            _smsConfiguration = smsConfiguration;
+            _smsOptions = smsOptions.Value;
         }
 
         public async Task SendSmsAsync(string numberTo, string message)
         {
-            string accountSid = _smsConfiguration.SMSAccountIdentification;
-            string authToken = _smsConfiguration.SMSAccountToken;
-            string numberFrom = _smsConfiguration.SMSAccountFrom;
+            string accountSid = _smsOptions.SMSAccountIdentification;
+            string authToken = _smsOptions.SMSAccountToken;
+            string numberFrom = _smsOptions.SMSAccountFrom;
 
             TwilioClient.Init(accountSid, authToken);
 

@@ -1,9 +1,9 @@
-﻿using ChatRoom.Services.Email.Interfaces;
-
-namespace ChatRoom.Services.Email
+﻿namespace ChatRoom.Services.OptionModels
 {
-    public class EmailConfiguration : IEmailConfiguration
+    public class EmailOptions
     {
+        public const string EmailConfig = "EmailConfiguration";
+
         public string SmtpServer { get; set; }
 
         public int SmtpPort { get; set; }

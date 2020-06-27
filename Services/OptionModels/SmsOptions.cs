@@ -1,9 +1,9 @@
-﻿using ChatRoom.Services.Sms.Interfaces;
-
-namespace ChatRoom.Services.Sms
+﻿namespace ChatRoom.Services.OptionModels
 {
-    public class SmsConfiguration : ISmsConfiguration
+    public class SmsOptions
     {
+        public const string SmsConfig = "TwilioConfiguration";
+
         public string SMSAccountIdentification { get; set; }
 
         public string SMSAccountToken { get; set; }

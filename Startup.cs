@@ -13,6 +13,7 @@ using ChatRoom.Services.Email;
 using ChatRoom.Hubs;
 using ChatRoom.Services.Sms.Interfaces;
 using ChatRoom.Services.Sms;
+using ChatRoom.Services.OptionModels;
 
 namespace ChatRoom
 {
@@ -58,15 +59,15 @@ namespace ChatRoom
             });
 
             // MailKit
-            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration")
-                .Get<EmailConfiguration>());
-
+            // Secret manager tool applied to each EmailOptions attribute:
+            // dotnet user-secrets set "EmailConfiguration:SmtpServer" "xxxxx"
+            services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.EmailConfig));
             services.AddTransient<IEmailSender, EmailSender>();
 
             // Twilio
-            services.AddSingleton<ISmsConfiguration>(Configuration.GetSection("TwilioConfiguration")
-                .Get<SmsConfiguration>());
-
+            // Secret manager tool applied to each SmsOptions attribute:
+            // dotnet user-secrets set "TwilioConfiguration:SMSAccountIdentification" "xxxxx"
+            services.Configure<SmsOptions>(Configuration.GetSection(SmsOptions.SmsConfig));
             services.AddTransient<ISmsSender, SmsSender>();
 
             services.AddRazorPages()

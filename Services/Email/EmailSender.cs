@@ -1,5 +1,7 @@
 ﻿using ChatRoom.Services.Email.Interfaces;
+using ChatRoom.Services.OptionModels;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using System.Collections.Generic;
@@ -9,11 +11,11 @@ namespace ChatRoom.Services.Email
 {
 	public class EmailSender : IEmailSender
     {
-        private readonly IEmailConfiguration _emailConfiguration;
+        private readonly EmailOptions _emailOptions;
 
-		public EmailSender(IEmailConfiguration emailConfiguration)
+		public EmailSender(IOptions<EmailOptions> emailOptions)
         {
-            _emailConfiguration = emailConfiguration;
+			_emailOptions = emailOptions.Value;
         }
 
         public async Task SendEmailAsync(string nameTo, string emailTo, string subject, string content)
@@ -22,7 +24,7 @@ namespace ChatRoom.Services.Email
 
 			message.From.AddRange(new List<MailboxAddress>() 
 			{ 
-				new MailboxAddress(name: _emailConfiguration.NameFrom, address: _emailConfiguration.EmailFrom) 
+				new MailboxAddress(name: _emailOptions.NameFrom, address: _emailOptions.EmailFrom) 
 			});
 
 			message.To.AddRange(new List<MailboxAddress>() 
@@ -39,9 +41,9 @@ namespace ChatRoom.Services.Email
 
 			using (var emailClient = new SmtpClient())
 			{
-				emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, true);
+				emailClient.Connect(_emailOptions.SmtpServer, _emailOptions.SmtpPort, true);
 				emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
-				emailClient.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+				emailClient.Authenticate(_emailOptions.SmtpUsername, _emailOptions.SmtpPassword);
 
 				await emailClient.SendAsync(message);
 
