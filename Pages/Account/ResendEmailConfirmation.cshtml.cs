@@ -1,4 +1,5 @@
 ﻿using ChatRoom.Data.Models;
+using ChatRoom.Services.Sms.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace ChatRoom.Pages.Account
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly mailKit.IEmailSender _emailSender;
+        private readonly ISmsSender _smsSender;
 
-        public ResendEmailConfirmationModel(UserManager<AppUser> userManager, mailKit.IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<AppUser> userManager, mailKit.IEmailSender emailSender, ISmsSender smsSender)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _smsSender = smsSender;
         }
 
         [BindProperty]
@@ -70,6 +73,13 @@ namespace ChatRoom.Pages.Account
                 Input.Email,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+            if (!string.IsNullOrWhiteSpace(user.PhoneNumber))
+            {
+                 await _smsSender.SendSmsAsync(
+                     user.PhoneNumber, 
+                     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            }
 
             Message = "Verification email sent. Please check your email.";
 

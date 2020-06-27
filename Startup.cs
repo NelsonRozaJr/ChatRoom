@@ -11,6 +11,8 @@ using ChatRoom.Data.Models;
 using ChatRoom.Services.Email.Interfaces;
 using ChatRoom.Services.Email;
 using ChatRoom.Hubs;
+using ChatRoom.Services.Sms.Interfaces;
+using ChatRoom.Services.Sms;
 
 namespace ChatRoom
 {
@@ -60,6 +62,12 @@ namespace ChatRoom
                 .Get<EmailConfiguration>());
 
             services.AddTransient<IEmailSender, EmailSender>();
+
+            // Twilio
+            services.AddSingleton<ISmsConfiguration>(Configuration.GetSection("TwilioConfiguration")
+                .Get<SmsConfiguration>());
+
+            services.AddTransient<ISmsSender, SmsSender>();
 
             services.AddRazorPages()
                 .AddRazorPagesOptions(options =>
