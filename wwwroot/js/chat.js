@@ -15,12 +15,21 @@ var connectionStart = function () {
             changeDisableButtons(false);
             $("#btnStart").hide();
             $("#txtMessage").focus();
+            $("#btnExit").show();
         })
         .catch(err => console.error(err.toString()));
 };
 
 var connectionStop = function () {
     connection.stop()
+        .then(() => {
+            changeDisableButtons(true);
+            $("#txtMessage").val("");
+            $("#btnStart").show();
+            $("#btnExit").hide();
+            $("#selUsers").val("");
+            $("#countUsers").html("");
+        })
         .catch(err => console.error(err));
 };
 
@@ -114,21 +123,11 @@ $("#btnSendMessage").click(event => {
 
 $("#btnExit").click(function (event) {
     connectionStop();
-
-    changeDisableButtons(true);
-
-    $("#txtMessage").val("");
-    $("#btnStart").show();
-    $("#btnExit").hide();
-    $("#selUsers").val("");
-    $("#countUsers").html("");
-
     event.preventDefault();
 });
 
 $("#btnStart").click(event => {
     connectionStart();
-    $("#btnExit").show();
     event.preventDefault();
 });
 
